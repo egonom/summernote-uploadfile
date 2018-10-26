@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Summernote uploadfile example</title>
+    <!-- include jquery -->
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+
+    <!-- include libraries BS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.js"></script>
+
+    <!-- include summernote -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.10/summernote.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.10/summernote-bs4.js"></script>
+    <script type="text/javascript" src="../dist/uploadfile.js"></script>
+
+    <script type="text/javascript">
+		$(document).ready(function() {
+
+			var uploadTargetUrl;
+// uploadTargetUrl = '';
+			if(typeof uploadTargetUrl == 'undefined'){
+
+				$('.summernote').summernote();
+				alert('To using upload plugin please specify target url!');
+
+			} else {
+
+				var options = {
+					toolbar: [
+						['uploadfile', ['uploadfile']],
+						['style', ['style']],
+						['font', ['bold', 'italic', 'underline', 'clear']],
+						['fontname', ['fontname']],
+						['color', ['color']],
+						['para', ['ul', 'ol', 'paragraph']],
+						['height', ['height']],
+						['table', ['table']],
+						['insert', ['media', 'link', 'hr', 'picture', 'video']],
+						['view', ['fullscreen', 'codeview']],
+						['help', ['help']]
+					],
+					callbacks: {
+						onImageUpload : function(files, editor, welEditable) {
+							for(var i = files.length - 1; i >= 0; i--) {
+								ajaxSummernoteUploadFile(files[i], this, uploadTargetUrl);
+							}
+						}
+					}
+				};
+
+				$('.summernote').summernote(options);
+
+           }
+		});
+    </script>
+</head>
+<body>
+<textarea class="summernote">Insert an image!</textarea>
+</body>
+</html>

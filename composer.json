@@ -1,0 +1,11 @@
+{
+    "name": "egonom/summernote-uploadfile",
+    "description": "summernote plugin",
+    "minimum-stability": "dev",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "egonom"
+        }
+    ]
+}
