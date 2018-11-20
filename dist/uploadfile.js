@@ -93,15 +93,16 @@ var insertAtChar;
 								},
 								onEscape:true
 							}).init(function() {
-// mediaUseUrl = '/backoffice/mediause/'+id;
-								if(typeof mediaUseUrl == 'undefined'){
-									alert('Please specify upload url!');
-									return false;
-								}
 
 								$('.lastUploaded').off();
 								$('.lastUploaded').on('click', function (event) {
 									var id = $(this).attr('id').split('-')[1];
+// mediaUseUrl = '/backoffice/mediause/'+id;
+									if(typeof mediaUseUrl == 'undefined'){
+										alert('Please specify upload url!');
+										return false;
+									}
+
 									$.get(mediaUseUrl, function (response) {
 
 										var node = document.createElement("a");
@@ -160,7 +161,7 @@ var insertAtChar;
 
 									$('.dataTable tr.selected td:nth-child(1)').each(function(i,item){
 										var id = parseInt($(item).html());
-										//mediaUseUrl = '/backoffice/mediause/'+id;
+//mediaUseUrl = '/backoffice/mediause/'+id;
 										if(typeof mediaUseUrl == 'undefined'){
 											alert('Please specify upload url!');
 											return false;
