@@ -1,4 +1,3 @@
-var currentSummernoteEditor;
 var last_focused_el;
 var insertAtChar;
 
@@ -49,15 +48,19 @@ var insertAtChar;
 				options = context.options,
 				lang    = options.langInfo,
 				$note	= context.$note,
-			mediaBrowserUrl,
-			mediaUseUrl;
-			currentSummernoteEditor = $note;
+				mediaBrowserUrl,
+				mediaUseUrl;
+			var currentSummernoteEditor = $note;
 
-			context.memo('button.uploadfile',function () {
+			context.memo('button.uploadfile', function (evt0) {
+
 				var button = ui.button({
 					contents: options.uploadfile.icon,
 					tooltip:  lang.uploadfile.tooltip,
-					click:function () {
+					click:function (e) {
+
+						// var range = $(context.invoke('saveRange'));
+						$(currentSummernoteEditor).summernote('editor.saveRange');
 
 						if (typeof last_focused_el == 'undefined'){
 							$('.note-editable', $editor).trigger('focus');
@@ -94,8 +97,8 @@ var insertAtChar;
 								onEscape:true
 							}).init(function() {
 
-								$('.lastUploaded').off();
-								$('.lastUploaded').on('click', function (event) {
+								$('.lastUploaded').click(function (event) {
+
 									var id = $(this).attr('id').split('-')[1];
 // mediaUseUrl = '/backoffice/mediause/'+id;
 									if(typeof mediaUseUrl == 'undefined'){
@@ -120,7 +123,8 @@ var insertAtChar;
 												case "image/gif":
 												case "image/tif":
 													node = document.createElement("img");
-													//a szerver oldalon generált id-val tesszük le a képet, így a form post során regexppel ki tudjuk venni a
+													//a szerver oldalon generált id-val tesszük le a képet,
+													// így a form post során regexppel ki tudjuk venni a
 													// megmaradó elemeket (gc a feleslegesen feltöltött file-ok számára)
 													node.setAttribute("src", response.src);
 													node.setAttribute("id", response.id);
@@ -131,27 +135,10 @@ var insertAtChar;
 													break;
 											}
 										}
+										$(currentSummernoteEditor).summernote('editor.restoreRange');
+										$(currentSummernoteEditor).summernote('editor.focus');
+										$(currentSummernoteEditor).summernote('editor.insertNode', node);
 
-										if(typeof last_focused_el != 'undefined'){
-
-											var range = document.createRange();
-											var sel = window.getSelection();
-
-											range.setStart(last_focused_el, last_focused_el.length); // put the cursor in last position of the element
-											range.collapse(true);
-											sel.removeAllRanges();
-											sel.addRange(range);
-											var self = $(currentSummernoteEditor).summernote('code');
-
-											try {
-												last_focused_el.focus();
-											}
-											catch(err) {
-												console.log(err.message);
-											}
-
-											$(currentSummernoteEditor).summernote('editor.insertNode', node);
-										}
 
 									}, 'json');
 									return false;
@@ -159,7 +146,7 @@ var insertAtChar;
 
 								insertAtChar = function(){
 
-									$('.dataTable tr.selected td:nth-child(1)').each(function(i,item){
+									$('.dataTable tr.selected td:nth-child(2)').each(function(i,item){
 										var id = parseInt($(item).html());
 //mediaUseUrl = '/backoffice/mediause/'+id;
 										if(typeof mediaUseUrl == 'undefined'){
@@ -182,7 +169,8 @@ var insertAtChar;
 													case "image/gif":
 													case "image/tif":
 														node = document.createElement("img");
-														//a szerver oldalon generált id-val tesszük le a képet, így a form post során regexppel ki tudjuk venni a
+														//a szerver oldalon generált id-val tesszük le a képet, így a form post során
+														// regexppel ki tudjuk venni a
 														// megmaradó elemeket (gc a feleslegesen feltöltött file-ok számára)
 														node.setAttribute("src", response.src);
 														node.setAttribute("id", response.id);
@@ -193,8 +181,10 @@ var insertAtChar;
 														break;
 												}
 											}
-
+											$(currentSummernoteEditor).summernote('editor.restoreRange');
+											$(currentSummernoteEditor).summernote('editor.focus');
 											$(currentSummernoteEditor).summernote('editor.insertNode', node);
+
 										}, 'json');
 									});
 
@@ -225,7 +215,9 @@ var insertAtChar;
 				'summernote.mousedown':function (we, e) {
 
 					var focused_element = window.getSelection().focusNode;
+
 					var parent = $(e.target).get(0);
+
 					if ($.contains(parent, focused_element))
 					{
 						// $(me.sn_editor).data('last_focused_element', focused_element)
@@ -262,63 +254,6 @@ var insertAtChar;
 		}
 	});
 
-	// $(document).on('click', '.lastUploaded', function (event) {
-	// 	var id = $(this).attr('id').split('-')[1];
-	// 	var url = '/backoffice/mediause/'+id;
-	// 	$.get(url, function (response) {
-	//
-	//
-	// 		var node = document.createElement("a");
-	// 		node.setAttribute("href", response.src);
-	// 		var createAText = document.createTextNode("letöltés");
-	// 		node.appendChild(createAText);
-	// 		node.setAttribute("target", "_blank");
-	// 		node.setAttribute("id", response.id);
-	//
-	// 		if(response.mime_type > ""){
-	// 			switch(response.mime_type){
-	// 				case "image/jpg":
-	// 				case "image/jpeg":
-	// 				case "image/png":
-	// 				case "image/gif":
-	// 				case "image/tif":
-	// 					node = document.createElement("img");
-	// 					//a szerver oldalon generált id-val tesszük le a képet, így a form post során regexppel ki tudjuk venni a
-	// 					// megmaradó elemeket (gc a feleslegesen feltöltött file-ok számára)
-	// 					node.setAttribute("src", response.src);
-	// 					node.setAttribute("id", response.id);
-	// 					// $(el).summernote("editor.insertImage", url);
-	// 					break;
-	// 				default:
-	// 					console.log(node);
-	// 					break;
-	// 			}
-	// 		}
-	//
-	// 		if(typeof last_focused_el != 'undefined'){
-	//
-	// 			var range = document.createRange();
-	// 			var sel = window.getSelection();
-	//
-	// 			range.setStart(last_focused_el, last_focused_el.length); // put the cursor in last position of the element
-	// 			range.collapse(true);
-	// 			sel.removeAllRanges();
-	// 			sel.addRange(range);
-	// 			var self = $(currentSummernoteEditor).summernote('code');
-	//
-	// 			try {
-	// 				last_focused_el.focus();
-	// 			}
-	// 			catch(err) {
-	// 				console.log(err.message);
-	// 			}
-	//
-	// 			$(currentSummernoteEditor).summernote('editor.insertNode', node);
-	// 		}
-	//
-	// 	}, 'json');
-	// 	return false;
-	// });
 
 }));
 
